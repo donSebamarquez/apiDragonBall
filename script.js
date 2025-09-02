@@ -1,42 +1,111 @@
-// Dragon Ball — Mini app solo con JS (sin HTML prehecho)
-// Requiere un <div id="app"></div> en el HTML.
-// Opcional: incluir Bootstrap CSS en el HTML para los estilos de los componentes.
-//   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+let añadirPersonaje = document.querySelector(".añadir")
+let añadirNombre = añadirPersonaje.querySelector(".name");
+let añadirKi = añadirPersonaje.querySelector(".ki");
+let añadirKiMaximo = añadirPersonaje.querySelector(".maxki");
+let añadirRaza = añadirPersonaje.querySelector(".race");
 
-// API de Dragon Ball
-const API = "https://dragonball-api.com/api/characters";
+let btnAñadirPersonaje = document.querySelector(".añadirButton")
+let btnEliminarPersonaje = document.querySelector(".eliminarButton")
 
-// Traer datos de la primera página
-async function cargarPersonajes() {
-  const res = await fetch(API + "?limit=10");
-  const data = await res.json();
-  // guardamos los personajes en un array
-  let personajes = data.items;
 
-  console.log("Lista original:", personajes.map(p => p.name));
+let personajes = document.querySelector(".characters");
 
-  // === BUSCAR ===
-  let buscados = personajes.filter(p => p.name.toLowerCase().includes("go"));
-  console.log("Buscados (contienen 'go'):", buscados.map(p => p.name));
+url = "https://dragonball-api.com/api/characters";
+let array = [];
 
-  // === ORDENAR ===
-  let ordenados = personajes.slice().sort((a, b) => a.name.localeCompare(b.name));
-  console.log("Ordenados A-Z:", ordenados.map(p => p.name));
+let id;
+let nombre;
+let raza;
+let ki;
+let kiMax;
 
-  // === AGREGAR ===
-  let nuevo = {
-    id: 999,
-    name: "Personaje Inventado",
-    ki: "1000",
-    race: "Human",
-    affiliation: "Test"
-  };
-  personajes.push(nuevo);
-  console.log("Con agregado:", personajes.map(p => p.name));
 
-  // === ELIMINAR ===
-  personajes = personajes.filter(p => p.id !== 999);
-  console.log("Después de eliminar:", personajes.map(p => p.name));
+document.addEventListener("DOMContentLoaded",()=>{
+
+    fetch(url)
+    .then(response => response.json())
+    .then(objetos => {
+    
+        cargarPersonajes(objetos);
+        
+});
+
+function cargarPersonajes(objetos){
+    
+    objetos.items.forEach(objeto => {
+            
+            array.push(objeto);
+
+        });
+
+    mostrarPersonajes(array);
+    console.log(array)
 }
 
-cargarPersonajes();
+function mostrarPersonajes(array){
+    let texto = ``;
+    array.forEach((e)=>{
+        texto += `
+            
+            <p>Name : ${e.name}</p>
+            <p>Descripcion : ${e.description}</p>
+            <p>Raza : ${e.race}</p>
+            <p>Ki : ${e.ki}</p>
+            <p>Ki maximo : ${e.maxKi}</p>
+            <p>Genero: ${e.gender}</p>
+            <img src="${e.image}">
+            
+        `;
+    })
+    personajes.innerHTML = texto;
+    
+
+}
+
+function borrarPersonaje(arr) {
+
+
+
+}
+
+function agregarPersonaje(id,nombre,raza,ki,kiMax){
+
+    let nuevoPersonaje = {
+        id : id,
+        name : nombre,
+        race : raza,
+        ki : ki,
+        kiMax : kiMax,
+        description: "",
+        gender: "",
+        image: ""
+    };
+    array = [...array,nuevoPersonaje];
+    console.log(array)
+    mostrarPersonajes(array);
+}
+
+btnAñadirPersonaje.addEventListener("click",(e)=>{
+    e.preventDefault();
+
+    id = (array.length + 1); 
+    nombre = añadirNombre.value;
+    raza = añadirRaza.value;
+    ki = añadirKi.value;
+    kiMax = añadirKiMaximo.value;
+    
+    agregarPersonaje(id,nombre,raza,ki,kiMax)
+    
+    añadirNombre.value = "";
+    añadirRaza.value = "";
+    añadirKi.value = "";
+    añadirKiMaximo.value = "";
+})
+
+btnEliminarPersonaje.addEventListener("click",()=>{
+    
+    borrarPersonaje()
+
+})
+
+})
